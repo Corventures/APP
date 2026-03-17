@@ -20,6 +20,7 @@ import { RootStackParamList } from "../../App";
 import CustomInput from "../components/CustomInput";
 import PrimaryButton from "../components/PrimaryButton";
 import { colors } from "../styles/color";
+import { supabase } from "../lib/supabase";
 
 type ForgotPasswordScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -32,13 +33,14 @@ export default function ForgotPasswordScreen({
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   function validateEmail(value: string) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(value);
   }
 
-  function handleRecoverPassword() {
+  async function handleRecoverPassword() {
     const emailValue = email.trim().toLowerCase();
     setEmailError("");
 
@@ -53,15 +55,20 @@ export default function ForgotPasswordScreen({
     }
 
     setLoading(true);
-
-    setTimeout(() => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(emailValue, {
+        redirectTo: "https://example.com/reset-password", // TODO: Criar página de reset de senha e colocar a URL aqui
+      });
       setLoading(false);
-      Alert.alert(
-        "Solicitação enviada",
-        "Se o e-mail estiver cadastrado, você receberá as instruções de redefinição de senha.",
-      );
-      navigation.goBack();
-    }, 1200);
+      if (error) {
+        setEmailError("Erro ao enviar e-mail. Tente novamente.");
+        return;
+      }
+      setIsSuccess(true);
+    } catch (err) {
+      setLoading(false);
+      setEmailError("Erro inesperado. Tente novamente.");
+    }
   }
 
   return (
@@ -88,36 +95,53 @@ export default function ForgotPasswordScreen({
             </View>
 
             <View style={styles.card}>
-              <CustomInput
-                label="E-mail"
-                icon="mail-outline"
-                placeholder="Ex: rm123456@fiap.com.br"
-                value={email}
-                onChangeText={(value) => {
-                  setEmail(value);
-                  if (emailError) {
-                    setEmailError("");
-                  }
-                }}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                errorMessage={emailError}
-              />
+              {isSuccess ? (
+                <View style={styles.successContainer}>
+                  <Text style={styles.successIcon}>✓</Text>
+                  <Text style={styles.successTitle}>E-mail enviado!</Text>
+                  <Text style={styles.successText}>
+                    Se o endereço estiver cadastrado, você receberá um e-mail
+                    com as instruções para redefinir sua senha em instantes.
+                  </Text>
+                  <PrimaryButton
+                    title="Voltar ao login"
+                    onPress={() => navigation.goBack()}
+                  />
+                </View>
+              ) : (
+                <>
+                  <CustomInput
+                    label="E-mail"
+                    icon="mail-outline"
+                    placeholder="Ex: rm123456@fiap.com.br"
+                    value={email}
+                    onChangeText={(value) => {
+                      setEmail(value);
+                      if (emailError) {
+                        setEmailError("");
+                      }
+                    }}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    errorMessage={emailError}
+                  />
 
-              <PrimaryButton
-                title="Enviar link"
-                onPress={handleRecoverPassword}
-                loading={loading}
-              />
+                  <PrimaryButton
+                    title="Enviar link"
+                    onPress={handleRecoverPassword}
+                    loading={loading}
+                  />
 
-              <TouchableOpacity
-                style={styles.backButton}
-                activeOpacity={0.8}
-                onPress={() => navigation.goBack()}
-              >
-                <Text style={styles.backButtonText}>Voltar ao login</Text>
-              </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.backButton}
+                    activeOpacity={0.8}
+                    onPress={() => navigation.goBack()}
+                  >
+                    <Text style={styles.backButtonText}>Voltar ao login</Text>
+                  </TouchableOpacity>
+                </>
+              )}
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -189,5 +213,27 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontSize: 15,
     fontWeight: "600",
+  },
+  successContainer: {
+    alignItems: "center",
+    paddingVertical: 10,
+  },
+  successIcon: {
+    fontSize: 52,
+    color: "#28a745",
+    marginBottom: 16,
+  },
+  successTitle: {
+    color: colors.white,
+    fontSize: 24,
+    fontWeight: "700",
+    marginBottom: 12,
+  },
+  successText: {
+    color: colors.textSecondary,
+    fontSize: 15,
+    textAlign: "center",
+    lineHeight: 22,
+    marginBottom: 24,
   },
 });

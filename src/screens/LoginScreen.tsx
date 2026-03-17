@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect } from "react";
 import {
   View,
   Text,
@@ -22,6 +24,7 @@ import CustomInput from "../components/CustomInput";
 import PrimaryButton from "../components/PrimaryButton";
 import { colors } from "../styles/color";
 import { supabase } from "../lib/supabase";
+import { Ionicons } from "@expo/vector-icons";
 
 type LoginScreenProps = NativeStackScreenProps<RootStackParamList, "Login">;
 
@@ -33,6 +36,22 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
   const [rmError, setRmError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [formError, setFormError] = useState("");
+
+  useEffect(() => {
+    loadRememberedUser();
+  }, []);
+
+  async function loadRememberedUser() {
+    try {
+      const savedRm = await AsyncStorage.getItem("@remembered_rm");
+      if (savedRm) {
+        // setRm(savedRm);
+        setRemember(true);
+      }
+    } catch (e) {
+      console.error("Erro ao carregar RM salvo:", e);
+    }
+  }
 
   async function handleLogin() {
     if (!validateForm()) {
@@ -56,6 +75,11 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
           console.error("Login error:", error);
         }
       } else {
+        if (remember) {
+          await AsyncStorage.setItem("@remembered_rm", rm.trim());
+        } else {
+          await AsyncStorage.removeItem("@remembered_rm");
+        }
         navigation.replace("Home");
       }
     } catch (e) {
@@ -154,18 +178,25 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
               ) : null}
 
               <View style={styles.optionsRow}>
-                <View style={styles.rememberWrapper}>
-                  <Switch
-                    value={remember}
-                    onValueChange={setRemember}
-                    trackColor={{
-                      false: "#3A3A42",
-                      true: "rgba(237,20,91,0.45)",
-                    }}
-                    thumbColor={remember ? colors.primary : "#D4D4D8"}
-                  />
-                  <Text style={styles.rememberText}>Lembrar-me</Text>
-                </View>
+                <TouchableOpacity
+                  style={styles.rememberWrapper}
+                  activeOpacity={0.7}
+                  onPress={() => setRemember((prev) => !prev)}
+                >
+                  <View
+                    style={[
+                      styles.checkboxBox,
+                      remember
+                        ? styles.checkboxBoxChecked
+                        : styles.checkboxBoxUnchecked,
+                    ]}
+                  >
+                    {remember && (
+                      <Ionicons name="checkmark" size={18} color="#fff" />
+                    )}
+                  </View>
+                  <Text style={styles.rememberText}>Lembrar de mim</Text>
+                </TouchableOpacity>
 
                 <TouchableOpacity
                   activeOpacity={0.7}
@@ -263,6 +294,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 14,
+  },
+  checkboxBox: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    borderWidth: 2,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 8,
+  },
+  checkboxBoxChecked: {
+    borderColor: colors.primary,
+    backgroundColor: colors.primary,
+  },
+  checkboxBoxUnchecked: {
+    borderColor: "#3A3A42",
+    backgroundColor: "transparent",
   },
   formError: {
     color: "#F87171",
