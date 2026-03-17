@@ -14,6 +14,36 @@ A proposta transforma o aplicativo em um **hub universitário moderno, rápido, 
 - 555931 - Lucas Derenze Simidu
 - 554873 - Sofia Fernandes
 
+---
+
+## Como rodar o projeto localmente
+
+Como o projeto utiliza o Supabase para o backend, é necessário configurar as variáveis de ambiente antes de executar o aplicativo.
+
+### 1. Clone o repositório:
+```bash
+git clone https://github.com/Corventures/MOBILE-CP1
+cd .\MOBILE-CP1
+```
+
+### 2. Instale as dependências:
+```bash
+npm install
+```
+
+### 3. Configuração de Variáveis de Ambiente:
+Para manter a segurança das credenciais do banco de dados, o arquivo `.env` não está no repositório. 
+- Crie um arquivo chamado `.env` na raiz do projeto.
+- Verifique o arquivo `.env.example` para ver quais variáveis são necessárias.
+- **Nota ao Professor**: As chaves reais (URL e Anon Key) do Supabase foram enviadas pelo Teams junto com o link desta entrega. Cole-as no seu arquivo `.env` local.
+
+### 4. Execute o aplicativo:
+```bash
+npx expo start
+```
+Após rodar o comando, escaneie o QR Code com o aplicativo **Expo Go** no seu dispositivo móvel ou utilize os atalhos do terminal para abrir em um emulador (`a` para Android ou `i` para iOS).
+
+
 ##  Resumo das Ideias Apresentadas
 
 ###  Painel Acadêmico (Evolução de Notas e Faltas)
