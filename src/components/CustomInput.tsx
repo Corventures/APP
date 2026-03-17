@@ -14,12 +14,14 @@ interface CustomInputProps extends TextInputProps {
   label: string;
   icon: keyof typeof Ionicons.glyphMap;
   isPassword?: boolean;
+  errorMessage?: string;
 }
 
 export default function CustomInput({
   label,
   icon,
   isPassword = false,
+  errorMessage,
   ...rest
 }: CustomInputProps) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -30,7 +32,9 @@ export default function CustomInput({
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
 
-      <View style={styles.inputWrapper}>
+      <View
+        style={[styles.inputWrapper, errorMessage ? styles.inputError : null]}
+      >
         <Ionicons
           name={icon}
           size={20}
@@ -58,6 +62,10 @@ export default function CustomInput({
           </TouchableOpacity>
         )}
       </View>
+
+      {errorMessage ? (
+        <Text style={styles.errorText}>{errorMessage}</Text>
+      ) : null}
     </View>
   );
 }
@@ -83,6 +91,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 14,
   },
+  inputError: {
+    borderColor: "#EF4444",
+  },
   leftIcon: {
     marginRight: 10,
   },
@@ -91,5 +102,10 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontSize: 16,
     paddingVertical: 14,
+  },
+  errorText: {
+    color: "#F87171",
+    marginTop: 6,
+    fontSize: 12,
   },
 });

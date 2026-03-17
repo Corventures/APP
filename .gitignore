@@ -1,5 +1,8 @@
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
+# Keys
+.env
+
 # dependencies
 node_modules/
 
@@ -26,6 +29,9 @@ npm-debug.*
 yarn-debug.*
 yarn-error.*
 coverage/
+
+#pnpm 
+pnpm-lock.yaml
 
 # macOS
 .DS_Store

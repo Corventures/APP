@@ -15,31 +15,79 @@ import {
   StatusBar,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
+import { RootStackParamList } from "../../App";
 import CustomInput from "../components/CustomInput";
 import PrimaryButton from "../components/PrimaryButton";
 import { colors } from "../styles/color";
+import { supabase } from "../lib/supabase";
 
-export default function LoginScreen() {
+type LoginScreenProps = NativeStackScreenProps<RootStackParamList, "Login">;
+
+export default function LoginScreen({ navigation }: LoginScreenProps) {
   const [rm, setRm] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [rmError, setRmError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [formError, setFormError] = useState("");
 
-  function handleLogin() {
-    if (!rm.trim() || !password.trim()) {
-      Alert.alert("Campos obrigatórios", "Preencha seu RM/e-mail e sua senha.");
+  async function handleLogin() {
+    if (!validateForm()) {
       return;
     }
 
     setLoading(true);
+    setFormError("");
 
-    setTimeout(() => {
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: rm.trim(),
+        password: password.trim(),
+      });
+
+      if (error) {
+        if (error.message.toLowerCase().includes("invalid login credentials")) {
+          setFormError("E-mail ou senha inválidos.");
+        } else {
+          setFormError("Erro ao fazer login. Tente novamente.");
+          console.error("Login error:", error);
+        }
+      } else {
+        navigation.replace("Home");
+      }
+    } catch (e) {
+      setFormError("Erro inesperado. Tente novamente.");
+    } finally {
       setLoading(false);
-          Alert.alert(
-      "Login concluído",
-      `Seu acesso foi realizado com sucesso.`
-    );
-    }, 1200);
+    }
+  }
+
+  function validateForm() {
+    const rmValue = rm.trim();
+    const passwordValue = password.trim();
+    let isValid = true;
+
+    setRmError("");
+    setPasswordError("");
+    setFormError("");
+
+    if (!rmValue) {
+      setRmError("Informe seu RM ou e-mail institucional.");
+      isValid = false;
+    }
+
+    if (!passwordValue) {
+      setPasswordError("Informe sua senha.");
+      isValid = false;
+    } else if (passwordValue.length < 6) {
+      setPasswordError("A senha deve ter pelo menos 6 caracteres.");
+      isValid = false;
+    }
+
+    return isValid;
   }
 
   return (
@@ -58,15 +106,15 @@ export default function LoginScreen() {
           >
             <View style={styles.topSection}>
               <Image
-              source={require("../../assets/fiap-logo.png")}
-              style={styles.logo}
-              resizeMode="contain"
-            />
+                source={require("../../assets/fiap-logo.png")}
+                style={styles.logo}
+                resizeMode="contain"
+              />
 
               <Text style={styles.title}>Portal do Aluno</Text>
-              <Text style={styles.subtitle}>
+              {/* <Text style={styles.subtitle}>
                 Entre no portal acadêmico da FIAP com seus dados institucionais.
-              </Text>
+              </Text> */}
             </View>
 
             <View style={styles.card}>
@@ -75,9 +123,15 @@ export default function LoginScreen() {
                 icon="person-outline"
                 placeholder="Ex: RM123456@fiap.com.br"
                 value={rm}
-                onChangeText={setRm}
+                onChangeText={(value) => {
+                  setRm(value);
+                  if (rmError) {
+                    setRmError("");
+                  }
+                }}
                 keyboardType="email-address"
                 autoCapitalize="none"
+                errorMessage={rmError}
               />
 
               <CustomInput
@@ -85,9 +139,19 @@ export default function LoginScreen() {
                 icon="lock-closed-outline"
                 placeholder="Digite sua senha"
                 value={password}
-                onChangeText={setPassword}
+                onChangeText={(value) => {
+                  setPassword(value);
+                  if (passwordError) {
+                    setPasswordError("");
+                  }
+                }}
                 isPassword
+                errorMessage={passwordError}
               />
+
+              {formError ? (
+                <Text style={styles.formError}>{formError}</Text>
+              ) : null}
 
               <View style={styles.optionsRow}>
                 <View style={styles.rememberWrapper}>
@@ -99,12 +163,14 @@ export default function LoginScreen() {
                       true: "rgba(237,20,91,0.45)",
                     }}
                     thumbColor={remember ? colors.primary : "#D4D4D8"}
-                    
                   />
                   <Text style={styles.rememberText}>Lembrar-me</Text>
                 </View>
 
-                <TouchableOpacity activeOpacity={0.7}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => navigation.navigate("ForgotPassword")}
+                >
                   <Text style={styles.forgotText}>Esqueci minha senha</Text>
                 </TouchableOpacity>
               </View>
@@ -121,14 +187,18 @@ export default function LoginScreen() {
                 <View style={styles.divider} />
               </View>
 
-              <TouchableOpacity style={styles.secondaryButton} activeOpacity={0.8}>
+              <TouchableOpacity
+                style={styles.secondaryButton}
+                activeOpacity={0.8}
+                onPress={() => navigation.navigate("Register")}
+              >
                 <Text style={styles.secondaryButtonText}>Criar conta</Text>
               </TouchableOpacity>
             </View>
 
-            <Text style={styles.footer}>
+            {/* <Text style={styles.footer}>
               © FIAP - Faculdade de Informática e Administração Paulista
-            </Text>
+            </Text> */}
           </ScrollView>
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
@@ -148,7 +218,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "center",
     paddingHorizontal: 24,
-    paddingVertical: 28,
+    paddingVertical: 20,
   },
   topSection: {
     alignItems: "center",
@@ -156,7 +226,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 170,
-    height: 70,
+    height: 46,
     marginBottom: 18,
   },
   title: {
@@ -193,6 +263,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 14,
+  },
+  formError: {
+    color: "#F87171",
+    fontSize: 13,
+    marginBottom: 10,
+    marginTop: -2,
   },
   rememberText: {
     color: colors.textSecondary,
