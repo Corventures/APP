@@ -1,14 +1,12 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect } from "react";
+
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   Image,
-  Alert,
-  Switch,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -17,18 +15,16 @@ import {
   StatusBar,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-
-import { RootStackParamList } from "../../App";
-import CustomInput from "../components/CustomInput";
-import PrimaryButton from "../components/PrimaryButton";
-import { colors } from "../styles/color";
-import { supabase } from "../lib/supabase";
+import CustomInput from "@components/CustomInput";
+import PrimaryButton from "@components/PrimaryButton";
+import { colors } from "@styles/color";
+import { supabase } from "@lib/supabase";
 import { Ionicons } from "@expo/vector-icons";
+import { useAppNavigation } from "@/hooks/useAppNavigation";
 
-type LoginScreenProps = NativeStackScreenProps<RootStackParamList, "Login">;
-
-export default function LoginScreen({ navigation }: LoginScreenProps) {
+export default function LoginScreen() {
+  const navigation = useAppNavigation();
+  
   const [rm, setRm] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
@@ -82,7 +78,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         }
         navigation.replace("Home");
       }
-    } catch (e) {
+    } catch {
       setFormError("Erro inesperado. Tente novamente.");
     } finally {
       setLoading(false);
@@ -130,7 +126,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
           >
             <View style={styles.topSection}>
               <Image
-                source={require("../../assets/fiap-logo.png")}
+                source={require("@assets/fiap-logo.png")}
                 style={styles.logo}
                 resizeMode="contain"
               />

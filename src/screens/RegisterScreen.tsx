@@ -10,21 +10,17 @@ import {
   StatusBar,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-import { RootStackParamList } from "../../App";
-import CustomInput from "../components/CustomInput";
-import PrimaryButton from "../components/PrimaryButton";
-import { colors } from "../styles/color";
-import { supabase } from "../lib/supabase";
+import CustomInput from "@components/CustomInput";
+import PrimaryButton from "@components/PrimaryButton";
+import { colors } from "@styles/color";
+import { supabase } from "@lib/supabase";
+import { useAppNavigation } from "@/hooks/useAppNavigation";
 
-type RegisterScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "Register"
->;
+export default function RegisterScreen() {
+  const navigation = useAppNavigation();
 
-export default function RegisterScreen({ navigation }: RegisterScreenProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -121,7 +117,7 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
         }
       }
 
-      navigation.replace("Home");
+      navigation.navigate("Home");
     } catch {
       setFormError("Erro inesperado. Tente novamente.");
     } finally {
@@ -143,7 +139,7 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
         >
           <View style={styles.topSection}>
             <Image
-              source={require("../../assets/fiap-logo.png")}
+              source={require("@assets/fiap-logo.png")}
               style={styles.logo}
               resizeMode="contain"
             />

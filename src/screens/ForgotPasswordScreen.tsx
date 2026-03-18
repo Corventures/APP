@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -14,22 +13,15 @@ import {
   StatusBar,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import CustomInput from "@components/CustomInput";
+import PrimaryButton from "@components/PrimaryButton";
+import { colors } from "@styles/color";
+import { supabase } from "@lib/supabase";
+import { useNavigation } from "@react-navigation/native";
 
-import { RootStackParamList } from "../../App";
-import CustomInput from "../components/CustomInput";
-import PrimaryButton from "../components/PrimaryButton";
-import { colors } from "../styles/color";
-import { supabase } from "../lib/supabase";
+export default function ForgotPasswordScreen() {
+  const navigation = useNavigation();
 
-type ForgotPasswordScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "ForgotPassword"
->;
-
-export default function ForgotPasswordScreen({
-  navigation,
-}: ForgotPasswordScreenProps) {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -65,7 +57,7 @@ export default function ForgotPasswordScreen({
         return;
       }
       setIsSuccess(true);
-    } catch (err) {
+    } catch {
       setLoading(false);
       setEmailError("Erro inesperado. Tente novamente.");
     }
@@ -87,7 +79,7 @@ export default function ForgotPasswordScreen({
           >
             <View style={styles.topSection}>
               <Image
-                source={require("../../assets/fiap-logo.png")}
+                source={require("@assets/fiap-logo.png")}
                 style={styles.logo}
                 resizeMode="contain"
               />

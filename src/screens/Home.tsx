@@ -9,13 +9,12 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { colors } from "../styles/color";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../App";
+import { colors } from "@styles/color";
+import { useAppNavigation } from "@/hooks/useAppNavigation";
 
-type HomeScreenProps = NativeStackScreenProps<RootStackParamList, "Home">;
 
-export default function HomeScreen({ navigation }: HomeScreenProps) {
+export default function HomeScreen() {
+  const navigation = useAppNavigation();
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="light-content" backgroundColor={colors.background} />

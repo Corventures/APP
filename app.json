@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "MOBILEIOT-CP01",
-    "slug": "MOBILEIOT-CP01",
+    "name": "FIAPP",
+    "slug": "FIAPP",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/app-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash-icon.png",
