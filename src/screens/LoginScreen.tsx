@@ -33,21 +33,6 @@ export default function LoginScreen() {
   const [passwordError, setPasswordError] = useState("");
   const [formError, setFormError] = useState("");
 
-  useEffect(() => {
-    loadRememberedUser();
-  }, []);
-
-  async function loadRememberedUser() {
-    try {
-      const savedRm = await AsyncStorage.getItem("@remembered_rm");
-      if (savedRm) {
-        // setRm(savedRm);
-        setRemember(true);
-      }
-    } catch (e) {
-      console.error("Erro ao carregar RM salvo:", e);
-    }
-  }
 
   async function handleLogin() {
     if (!validateForm()) {
@@ -72,9 +57,9 @@ export default function LoginScreen() {
         }
       } else {
         if (remember) {
-          await AsyncStorage.setItem("@remembered_rm", rm.trim());
+          await AsyncStorage.setItem("@remember_me", "true");
         } else {
-          await AsyncStorage.removeItem("@remembered_rm");
+          await AsyncStorage.setItem("@remember_me", "false");
         }
         navigation.replace("Home");
       }

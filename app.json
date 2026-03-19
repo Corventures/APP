@@ -12,12 +12,12 @@
       "backgroundColor": "#ED145B"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.asteriuz.FIAPP"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#ED145B",
-
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"

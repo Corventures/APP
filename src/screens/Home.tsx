@@ -6,15 +6,29 @@ import {
   StyleSheet,
   StatusBar,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { colors } from "@styles/color";
 import { useAppNavigation } from "@/hooks/useAppNavigation";
+import { supabase } from "@/lib/supabase";
 
 
 export default function HomeScreen() {
   const navigation = useAppNavigation();
+
+  async function handleLogout() {
+    try {
+      await AsyncStorage.setItem("@remember_me", "false");
+      await supabase.auth.signOut();
+      navigation.replace("Login");
+    } catch (e) {
+      Alert.alert("Erro", "Não foi possível realizar o logout.");
+    }
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="light-content" backgroundColor={colors.background} />
@@ -34,7 +48,7 @@ export default function HomeScreen() {
         <TouchableOpacity
           style={styles.secondaryButton}
           activeOpacity={0.7}
-          onPress={() => navigation.navigate("Login")}
+          onPress={handleLogout}
         >
           <Ionicons
             name="exit-outline"
