@@ -46,11 +46,12 @@ export default function App() {
           <Stack.Screen
             name="Login"
             component={LoginScreen}
-            options={{ animation: "fade" }}
+            options={{ animation: "fade"  }}
           />
           <Stack.Screen
             name="ForgotPassword"
             component={ForgotPasswordScreen}
+            options={{ animation: "slide_from_bottom", presentation: "modal" }}
           />
           <Stack.Screen name="Register" component={RegisterScreen} />
           <Stack.Screen
