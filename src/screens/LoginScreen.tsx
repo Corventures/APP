@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import {
@@ -24,7 +24,7 @@ import { useAppNavigation } from "@/hooks/useAppNavigation";
 
 export default function LoginScreen() {
   const navigation = useAppNavigation();
-  
+
   const [rm, setRm] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
@@ -150,7 +150,8 @@ export default function LoginScreen() {
                   }
                 }}
                 keyboardType="email-address"
-                autoCapitalize="none"
+                textContentType="emailAddress"
+                autoComplete="email"
                 errorMessage={rmError}
               />
 
@@ -166,6 +167,8 @@ export default function LoginScreen() {
                   }
                 }}
                 isPassword
+                textContentType="password"
+                autoComplete="password"
                 errorMessage={passwordError}
               />
 

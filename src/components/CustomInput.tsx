@@ -46,6 +46,8 @@ export default function CustomInput({
           style={styles.input}
           placeholderTextColor={colors.textMuted}
           secureTextEntry={secureValue}
+          autoCapitalize="none"
+          autoComplete="off"
           {...rest}
         />
 

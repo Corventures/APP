@@ -115,6 +115,8 @@ export default function ForgotPasswordScreen() {
                     }}
                     keyboardType="email-address"
                     autoCapitalize="none"
+                    textContentType="emailAddress"
+                    autoComplete="email"
                     autoCorrect={false}
                     errorMessage={emailError}
                   />

@@ -161,6 +161,8 @@ export default function RegisterScreen() {
               }}
               keyboardType="email-address"
               autoCapitalize="none"
+              textContentType="emailAddress"
+              autoComplete="email"
               autoCorrect={false}
               errorMessage={emailError}
             />
@@ -177,6 +179,8 @@ export default function RegisterScreen() {
                 }
               }}
               isPassword
+              textContentType="password"
+              autoComplete="password"
               errorMessage={passwordError}
             />
 
@@ -192,6 +196,8 @@ export default function RegisterScreen() {
                 }
               }}
               isPassword
+              textContentType="password"
+              autoComplete="password"
               errorMessage={confirmPasswordError}
             />
 
