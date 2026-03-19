@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     padding: 22,
     borderWidth: 1,
     borderColor: "#202028",
-    shadowColor: "#000",
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.28,
     shadowRadius: 22,
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
   },
   successIcon: {
     fontSize: 52,
-    color: "#28a745",
+    color: colors.success,
     marginBottom: 16,
   },
   successTitle: {

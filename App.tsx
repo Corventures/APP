@@ -8,6 +8,7 @@ import LoginScreen from "./src/screens/LoginScreen";
 import ForgotPasswordScreen from "./src/screens/ForgotPasswordScreen";
 import RegisterScreen from "./src/screens/RegisterScreen";
 import HomeScreen from "./src/screens/Home";
+import { colors } from "@/styles/color";
 
 export type RootStackParamList = {
   Splash: undefined;
@@ -23,13 +24,13 @@ const FiapDarkTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    background: "#0A0A0D",
+    background: colors.background,
   },
 };
 
 export default function App() {
   return (
-    <View style={{ flex: 1, backgroundColor: "#0A0A0D" }}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <NavigationContainer theme={FiapDarkTheme}>
         <Stack.Navigator
           screenOptions={{

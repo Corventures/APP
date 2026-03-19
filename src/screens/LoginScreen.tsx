@@ -191,7 +191,7 @@ export default function LoginScreen() {
                     ]}
                   >
                     {remember && (
-                      <Ionicons name="checkmark" size={18} color="#fff" />
+                      <Ionicons name="checkmark" size={18} color={colors.white} />
                     )}
                   </View>
                   <Text style={styles.rememberText}>Lembrar de mim</Text>
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
     padding: 22,
     borderWidth: 1,
     borderColor: "#202028",
-    shadowColor: "#000",
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.28,
     shadowRadius: 22,
