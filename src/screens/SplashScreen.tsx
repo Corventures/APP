@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { View, StyleSheet, Image, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { supabase } from "@lib/supabase";
-import { colors } from "@styles/color";
+import { supabase } from "@/lib/supabase";
+import { colors } from "@/styles/color";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SplashScreen({ navigation }: any) {

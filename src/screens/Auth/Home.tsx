@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { colors } from "@styles/color";
+import { colors } from "@/styles/color";
 import { useAppNavigation } from "@/hooks/useAppNavigation";
 import { supabase } from "@/lib/supabase";
 

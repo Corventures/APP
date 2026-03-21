@@ -10,5 +10,6 @@ export const colors = {
   textSecondary: "#B3B3BD",
   textMuted: "#7C7C88",
   error: "#F87171",
-  success: "#28a745",
+  warning: "#FBBF24",
+  success: "#27c24bff",
 };

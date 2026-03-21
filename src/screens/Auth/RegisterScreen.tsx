@@ -12,10 +12,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-import CustomInput from "@components/CustomInput";
-import PrimaryButton from "@components/PrimaryButton";
-import { colors } from "@styles/color";
-import { supabase } from "@lib/supabase";
+import CustomInput from "@/components/CustomInput";
+import PrimaryButton from "@/components/PrimaryButton";
+import { colors } from "@/styles/color";
+import { supabase } from "@/lib/supabase";
 import { useAppNavigation } from "@/hooks/useAppNavigation";
 
 export default function RegisterScreen() {
