@@ -1,5 +1,6 @@
 import React from "react";
 import ComingSoon from "@/components/ComingSoon";
+import { BarChart2, Bell, Calendar, Rocket } from "lucide-react-native";
 
 
 export default function HomeTabScreen() {
@@ -7,16 +8,16 @@ export default function HomeTabScreen() {
         <ComingSoon
             screenTitle="Início"
             subtitle="Estamos preparando sua experiência principal"
-            heroIcon="sparkles"
+            heroIcon={Rocket}
             heroTitle="Em breve no app"
             description="Seu painel inicial terá atalhos inteligentes, próximas aulas e visão rápida do semestre."
             features={[
-                { icon: "calendar-outline", text: "Próximas aulas e compromissos" },
-                { icon: "stats-chart-outline", text: "Resumo de desempenho acadêmico" },
-                { icon: "notifications-outline", text: "Alertas importantes em tempo real" },
+                { icon: Calendar, text: "Próximas aulas e compromissos" },
+                { icon: BarChart2, text: "Resumo de desempenho acadêmico" },
+                { icon: Bell, text: "Alertas importantes em tempo real" },
             ]}
             ctaText="Me avise quando lançar"
-            ctaIcon="notifications-outline"
+            ctaIcon={Bell}
         />
     );
 }

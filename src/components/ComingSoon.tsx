@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Ionicons } from "@expo/vector-icons";
+import { Sparkles, Bell, LucideIcon } from "lucide-react-native";
 import { colors } from "@/styles/color";
 import {
     Animated,
@@ -13,32 +13,32 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 type ComingSoonFeature = {
-    icon: React.ComponentProps<typeof Ionicons>["name"];
+    icon: LucideIcon;
     text: string;
 };
 
 type ComingSoonProps = {
     screenTitle: string;
     subtitle: string;
-    heroIcon: React.ComponentProps<typeof Ionicons>["name"];
+    heroIcon: LucideIcon;
     badgeText?: string;
     heroTitle: string;
     description: string;
     features: ComingSoonFeature[];
     ctaText: string;
-    ctaIcon?: React.ComponentProps<typeof Ionicons>["name"];
+    ctaIcon?: LucideIcon;
 };
 
 export default function ComingSoon({
     screenTitle,
     subtitle,
-    heroIcon,
+    heroIcon: HeroIcon, // Capitalized to use as a component
     badgeText = "Coming Soon",
     heroTitle,
     description,
     features,
     ctaText,
-    ctaIcon = "notifications-outline",
+    ctaIcon: CtaIcon = Bell, // Capitalized to use as a component
 }: ComingSoonProps) {
     const pulseAnimation = useRef(new Animated.Value(0)).current;
     const floatAnimation = useRef(new Animated.Value(0)).current;
@@ -101,7 +101,7 @@ export default function ComingSoon({
             <View style={styles.container}>
                 <View style={styles.header}>
                     <Text style={styles.title}>{screenTitle}</Text>
-                    <Text style={styles.subtitle}>{subtitle}</Text>
+                    {/* <Text style={styles.subtitle}>{subtitle}</Text> */}
                 </View>
 
                 <View style={styles.heroCard}>
@@ -123,11 +123,12 @@ export default function ComingSoon({
                             },
                         ]}
                     >
-                        <Ionicons name={heroIcon} size={42} color={colors.white} />
+                        {/* Rendering the passed Lucide icon component */}
+                        <HeroIcon size={42} color={colors.white} />
                     </Animated.View>
 
                     <View style={styles.badge}>
-                        <Ionicons name="sparkles" size={14} color={colors.primary} />
+                        <Sparkles size={14} color={colors.primary} />
                         <Text style={styles.badgeText}>{badgeText}</Text>
                     </View>
 
@@ -135,16 +136,19 @@ export default function ComingSoon({
                     <Text style={styles.heroDescription}>{description}</Text>
 
                     <View style={styles.featureList}>
-                        {features.map((feature) => (
-                            <View key={`${feature.icon}-${feature.text}`} style={styles.featureItem}>
-                                <Ionicons name={feature.icon} size={18} color={colors.primary} />
-                                <Text style={styles.featureText}>{feature.text}</Text>
-                            </View>
-                        ))}
+                        {features.map((feature) => {
+                            const FeatureIcon = feature.icon; // Extract component to render
+                            return (
+                                <View key={feature.text} style={styles.featureItem}>
+                                    <FeatureIcon size={18} color={colors.primary} />
+                                    <Text style={styles.featureText}>{feature.text}</Text>
+                                </View>
+                            );
+                        })}
                     </View>
 
                     <Pressable style={styles.ctaButton}>
-                        <Ionicons name={ctaIcon} size={18} color={colors.white} />
+                        <CtaIcon size={18} color={colors.white} />
                         <Text style={styles.ctaText}>{ctaText}</Text>
                     </Pressable>
                 </View>

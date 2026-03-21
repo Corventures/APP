@@ -18,10 +18,19 @@ export default function SemesterSection({ semester }: SemesterSectionProps) {
     const averageStatus =
         averageGrade >= 8 ? "Excelente" : averageGrade >= 6 ? "Aprovado" : "Risco";
 
+    const lowestCpGrade = Math.min(
+        ...semester.evaluations
+            .filter((e) => e.type.includes("CheckPoint"))
+            .map((e) => e.grade)
+    );
+    const indexOfLowestCp = semester.evaluations.findIndex(
+        (e) => e.type.includes("CheckPoint") && e.grade === lowestCpGrade
+    );
+
     return (
         <View style={styles.semesterContainer}>
             <View style={styles.semesterHeader}>
-                <Text style={styles.semesterTitle}>{semester.semester}º Semestre</Text>
+                <Text style={styles.semesterTitle}>Desempenho Geral</Text>
                 <View style={styles.semesterStatusBadge}>
                     <Text
                         style={[
@@ -104,22 +113,22 @@ export default function SemesterSection({ semester }: SemesterSectionProps) {
                 </View>
             </View>
 
-            <Text style={styles.evaluationSectionTitle}>Avaliações</Text>
+            <View style={styles.evaluationsSection}>
+                <Text style={styles.evaluationSectionTitle}>Avaliações</Text>
 
-            <View style={styles.evaluationsGrid}>
-                {semester.evaluations.map((evaluation, index) => {
-                    const lowestGrade = Math.min(...semester.evaluations.map((e) => e.grade));
-                    const isLowestGradeCP = evaluation.grade === lowestGrade &&
-                        semester.evaluations.findIndex((e) => e.grade === lowestGrade) === index;
-                    return (
-                        <EvaluationBadge
-                            key={index}
-                            type={evaluation.type}
-                            grade={evaluation.grade}
-                            isLowestGrade={isLowestGradeCP}
-                        />
-                    );
-                })}
+                <View style={styles.evaluationsGrid}>
+                    {semester.evaluations.map((evaluation, index) => {
+                        const isLowestGradeCP = index === indexOfLowestCp;
+                        return (
+                            <EvaluationBadge
+                                key={index}
+                                type={evaluation.type}
+                                grade={evaluation.grade}
+                                isLowestGrade={isLowestGradeCP}
+                            />
+                        );
+                    })}
+                </View>
             </View>
         </View>
     );
@@ -172,7 +181,7 @@ const styles = StyleSheet.create({
         color: colors.textSecondary,
     },
     statValue: {
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: "700",
         marginTop: 4,
         color: colors.white,
@@ -200,16 +209,23 @@ const styles = StyleSheet.create({
         height: "100%",
         borderRadius: 999,
     },
+    evaluationsSection: {
+        borderWidth: 1,
+        borderColor: "#2B2B32",
+        backgroundColor: "#17171C",
+        borderRadius: 10,
+        padding: 10,
+    },
     evaluationSectionTitle: {
-        color: colors.textSecondary,
+        color: colors.white,
         fontSize: 12,
-        fontWeight: "600",
+        fontWeight: "700",
         marginBottom: 8,
     },
     evaluationsGrid: {
         flexDirection: "row",
         flexWrap: "wrap",
-        justifyContent: "center",
+        justifyContent: "flex-start",
         gap: 10,
     },
 });

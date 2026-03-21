@@ -18,6 +18,7 @@ import PrimaryButton from "@/components/PrimaryButton";
 import { colors } from "@/styles/color";
 import { supabase } from "@/lib/supabase";
 import { useNavigation } from "@react-navigation/native";
+import { Mail } from "lucide-react-native";
 
 export default function ForgotPasswordScreen() {
   const navigation = useNavigation();
@@ -104,7 +105,7 @@ export default function ForgotPasswordScreen() {
                 <>
                   <CustomInput
                     label="E-mail"
-                    icon="mail-outline"
+                    icon={Mail}
                     placeholder="Ex: rm123456@fiap.com.br"
                     value={email}
                     onChangeText={(value) => {

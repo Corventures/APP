@@ -17,6 +17,7 @@ import PrimaryButton from "@/components/PrimaryButton";
 import { colors } from "@/styles/color";
 import { supabase } from "@/lib/supabase";
 import { useAppNavigation } from "@/hooks/useAppNavigation";
+import { Mail, Lock, ShieldCheck } from "lucide-react-native";
 
 export default function RegisterScreen() {
   const navigation = useAppNavigation();
@@ -150,7 +151,7 @@ export default function RegisterScreen() {
           <View style={styles.card}>
             <CustomInput
               label="E-mail"
-              icon="mail-outline"
+              icon={Mail}
               placeholder="Ex: RM123456@fiap.com.br"
               value={email}
               onChangeText={(value) => {
@@ -169,7 +170,7 @@ export default function RegisterScreen() {
 
             <CustomInput
               label="Senha"
-              icon="lock-closed-outline"
+              icon={Lock}
               placeholder="Digite sua senha"
               value={password}
               onChangeText={(value) => {
@@ -186,7 +187,7 @@ export default function RegisterScreen() {
 
             <CustomInput
               label="Confirmar senha"
-              icon="shield-checkmark-outline"
+              icon={ShieldCheck}
               placeholder="Confirme sua senha"
               value={confirmPassword}
               onChangeText={(value) => {

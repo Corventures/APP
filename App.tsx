@@ -4,10 +4,10 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import SplashScreen from "./src/screens/SplashScreen";
-import LoginScreen from "./src/screens/Auth/LoginScreen";
-import ForgotPasswordScreen from "./src/screens/Auth/ForgotPasswordScreen";
-import RegisterScreen from "./src/screens/Auth/RegisterScreen";
-import BottomTabNavigator from "./src/screens/Tabs/BottomTabNavigator";
+import LoginScreen from "./src/screens/auth/LoginScreen";
+import ForgotPasswordScreen from "./src/screens/auth/ForgotPasswordScreen";
+import RegisterScreen from "./src/screens/auth/RegisterScreen";
+import BottomTabNavigator from "./src/screens/tabs/BottomTabNavigator";
 import { colors } from "@/styles/color";
 
 export type RootStackParamList = {
@@ -46,7 +46,7 @@ export default function App() {
           <Stack.Screen
             name="Login"
             component={LoginScreen}
-            options={{ animation: "fade"  }}
+            options={{ animation: "fade" }}
           />
           <Stack.Screen
             name="ForgotPassword"

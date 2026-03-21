@@ -1,4 +1,17 @@
 import { colors } from "@/styles/color";
+import {
+    LucideIcon,
+    Smartphone,
+    Network,
+    FileCode,
+    ShieldCheck,
+    Brain,
+    TerminalSquare,
+    CircuitBoard,
+    TestTubes,
+    BrainCircuit,
+    FlaskConical
+} from 'lucide-react-native';
 
 export interface Evaluation {
     type: "CheckPoint 1" | "CheckPoint 2" | "CheckPoint 3" | "Challenge 1" | "Challenge 2" | "Global Solution";
@@ -15,7 +28,7 @@ export interface Subject {
     id: string;
     title: string;
     professor: string;
-    icon: string;
+    icon: LucideIcon;
     semesters: Semester[];
 }
 
@@ -24,15 +37,15 @@ export const SUBJECTS: Subject[] = [
         id: "1",
         title: "Mobile Development & IoT",
         professor: "Adeilton da Silva Meneses",
-        icon: "phone",
+        icon: Smartphone,
         semesters: [
             {
                 semester: 1,
                 evaluations: [
                     { type: "CheckPoint 1", grade: 3.5 },
                     { type: "CheckPoint 2", grade: 3.5 },
-                    { type: "CheckPoint 3", grade: 5.2 },
-                    { type: "Challenge 1", grade: 6.0 },
+                    { type: "CheckPoint 3", grade: 8.2 },
+                    { type: "Challenge 1", grade: 2.0 },
                     { type: "Challenge 2", grade: 5.5 },
                     { type: "Global Solution", grade: 4.8 },
                 ],
@@ -56,7 +69,7 @@ export const SUBJECTS: Subject[] = [
         id: "2",
         title: "Arquitetura Orientada a Serviços (SOA) e Web Services",
         professor: "Salatiel Luz Marinho",
-        icon: "lan",
+        icon: Network,
         semesters: [
             {
                 semester: 1,
@@ -88,7 +101,7 @@ export const SUBJECTS: Subject[] = [
         id: "3",
         title: "C# Software Development",
         professor: "Rafael Santos Novo Pereira",
-        icon: "language-csharp",
+        icon: FileCode,
         semesters: [
             {
                 semester: 1,
@@ -120,7 +133,7 @@ export const SUBJECTS: Subject[] = [
         id: "4",
         title: "Cybersecurity",
         professor: "Vitor Miguel Lasse Silva",
-        icon: "shield-lock",
+        icon: ShieldCheck,
         semesters: [
             {
                 semester: 1,
@@ -152,7 +165,7 @@ export const SUBJECTS: Subject[] = [
         id: "5",
         title: "Inteligência Artificial & Machine Learning",
         professor: "Danilo Rodrigues de Assis Elias",
-        icon: "brain",
+        icon: BrainCircuit,
         semesters: [
             {
                 semester: 1,
@@ -184,7 +197,7 @@ export const SUBJECTS: Subject[] = [
         id: "6",
         title: "Operating Systems",
         professor: "Bruno Luiz de Almeida",
-        icon: "server",
+        icon: TerminalSquare,
         semesters: [
             {
                 semester: 1,
@@ -216,7 +229,7 @@ export const SUBJECTS: Subject[] = [
         id: "7",
         title: "Physical Computing: IoT & IOB",
         professor: "Yan Gabriel Coelho",
-        icon: "lightbulb-on",
+        icon: CircuitBoard,
         semesters: [
             {
                 semester: 1,
@@ -248,7 +261,7 @@ export const SUBJECTS: Subject[] = [
         id: "8",
         title: "Testing, Compliance & Quality Assurance",
         professor: "Prof. Gabriela Costa",
-        icon: "test-tube",
+        icon: FlaskConical,
         semesters: [
             {
                 semester: 1,

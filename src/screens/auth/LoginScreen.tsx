@@ -19,8 +19,8 @@ import CustomInput from "@/components/CustomInput";
 import PrimaryButton from "@/components/PrimaryButton";
 import { colors } from "@/styles/color";
 import { supabase } from "@/lib/supabase";
-import { Ionicons } from "@expo/vector-icons";
 import { useAppNavigation } from "@/hooks/useAppNavigation";
+import { Check, User, Lock } from "lucide-react-native";
 
 export default function LoginScreen() {
   const navigation = useAppNavigation();
@@ -117,15 +117,12 @@ export default function LoginScreen() {
               />
 
               <Text style={styles.title}>Portal do Aluno</Text>
-              {/* <Text style={styles.subtitle}>
-                Entre no portal acadêmico da FIAP com seus dados institucionais.
-              </Text> */}
             </View>
 
             <View style={styles.card}>
               <CustomInput
                 label="E-mail"
-                icon="person-outline"
+                icon={User}
                 placeholder="Ex: RM123456@fiap.com.br"
                 value={rm}
                 onChangeText={(value) => {
@@ -142,7 +139,7 @@ export default function LoginScreen() {
 
               <CustomInput
                 label="Senha"
-                icon="lock-closed-outline"
+                icon={Lock}
                 placeholder="Digite sua senha"
                 value={password}
                 onChangeText={(value) => {
@@ -176,7 +173,7 @@ export default function LoginScreen() {
                     ]}
                   >
                     {remember && (
-                      <Ionicons name="checkmark" size={18} color={colors.white} />
+                      <Check size={18} color={colors.white} />
                     )}
                   </View>
                   <Text style={styles.rememberText}>Lembrar de mim</Text>
@@ -211,9 +208,6 @@ export default function LoginScreen() {
               </TouchableOpacity>
             </View>
 
-            {/* <Text style={styles.footer}>
-              © FIAP - Faculdade de Informática e Administração Paulista
-            </Text> */}
           </ScrollView>
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
@@ -250,13 +244,6 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     textAlign: "center",
     marginBottom: 8,
-  },
-  subtitle: {
-    color: colors.textSecondary,
-    fontSize: 15,
-    textAlign: "center",
-    lineHeight: 22,
-    maxWidth: 300,
   },
   card: {
     backgroundColor: colors.card,
@@ -341,13 +328,5 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontSize: 15,
     fontWeight: "600",
-  },
-  footer: {
-    textAlign: "center",
-    marginTop: 24,
-    color: colors.textMuted,
-    fontSize: 12,
-    lineHeight: 18,
-    paddingHorizontal: 10,
   },
 });

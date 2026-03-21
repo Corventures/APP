@@ -7,19 +7,19 @@ import {
   TouchableOpacity,
   TextInputProps,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { LucideIcon, Eye, EyeOff } from "lucide-react-native";
 import { colors } from "../styles/color";
 
 interface CustomInputProps extends TextInputProps {
   label: string;
-  icon: keyof typeof Ionicons.glyphMap;
+  icon: LucideIcon;
   isPassword?: boolean;
   errorMessage?: string;
 }
 
 export default function CustomInput({
   label,
-  icon,
+  icon: Icon,
   isPassword = false,
   errorMessage,
   ...rest
@@ -35,13 +35,12 @@ export default function CustomInput({
       <View
         style={[styles.inputWrapper, errorMessage ? styles.inputError : null]}
       >
-        <Ionicons
-          name={icon}
+        <Icon
           size={20}
           color={colors.textSecondary}
           style={styles.leftIcon}
+          strokeWidth={1.5}
         />
-
         <TextInput
           style={styles.input}
           placeholderTextColor={colors.textMuted}
@@ -56,11 +55,11 @@ export default function CustomInput({
             onPress={() => setIsPasswordVisible(!isPasswordVisible)}
             activeOpacity={0.7}
           >
-            <Ionicons
-              name={isPasswordVisible ? "eye-off-outline" : "eye-outline"}
-              size={20}
-              color={colors.textSecondary}
-            />
+            {isPasswordVisible ? (
+              <EyeOff size={20} color={colors.textSecondary} strokeWidth={1.5} />
+            ) : (
+              <Eye size={20} color={colors.textSecondary} strokeWidth={1.5} />
+            )}
           </TouchableOpacity>
         )}
       </View>
