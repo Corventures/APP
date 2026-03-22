@@ -3,6 +3,7 @@
     "name": "FIAPP",
     "slug": "FIAPP",
     "version": "1.0.0",
+    "scheme": "fiapp",
     "orientation": "portrait",
     "icon": "./assets/app-icon.png",
     "userInterfaceStyle": "light",
@@ -32,6 +33,9 @@
       "eas": {
         "projectId": "2fd242e8-011f-4932-b27b-d548bfad6a0a"
       }
-    }
+    },
+    "plugins": [
+      "expo-router"
+    ]
   }
 }

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useRouter } from "expo-router";
 import {
   View,
   Text,
@@ -17,11 +18,10 @@ import CustomInput from "@/components/CustomInput";
 import PrimaryButton from "@/components/PrimaryButton";
 import { colors } from "@/styles/color";
 import { supabase } from "@/lib/supabase";
-import { useNavigation } from "@react-navigation/native";
 import { Mail } from "lucide-react-native";
 
 export default function ForgotPasswordScreen() {
-  const navigation = useNavigation();
+  const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -50,7 +50,7 @@ export default function ForgotPasswordScreen() {
     setLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(emailValue, {
-        redirectTo: "https://example.com/reset-password", // TODO: Criar página de reset de senha e colocar a URL aqui
+        redirectTo: "https://example.com/reset-password",
       });
       setLoading(false);
       if (error) {
@@ -98,7 +98,7 @@ export default function ForgotPasswordScreen() {
                   </Text>
                   <PrimaryButton
                     title="Voltar ao login"
-                    onPress={() => navigation.goBack()}
+                    onPress={() => router.back()}
                   />
                 </View>
               ) : (
@@ -131,7 +131,7 @@ export default function ForgotPasswordScreen() {
                   <TouchableOpacity
                     style={styles.backButton}
                     activeOpacity={0.8}
-                    onPress={() => navigation.goBack()}
+                    onPress={() => router.back()}
                   >
                     <Text style={styles.backButtonText}>Voltar ao login</Text>
                   </TouchableOpacity>

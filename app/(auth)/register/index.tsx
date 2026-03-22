@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useRouter } from "expo-router";
 import {
   View,
   Text,
@@ -16,11 +17,10 @@ import CustomInput from "@/components/CustomInput";
 import PrimaryButton from "@/components/PrimaryButton";
 import { colors } from "@/styles/color";
 import { supabase } from "@/lib/supabase";
-import { useAppNavigation } from "@/hooks/useAppNavigation";
 import { Mail, Lock, ShieldCheck } from "lucide-react-native";
 
 export default function RegisterScreen() {
-  const navigation = useAppNavigation();
+  const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -118,7 +118,7 @@ export default function RegisterScreen() {
         }
       }
 
-      navigation.navigate("Home");
+      router.replace("/(tabs)/home");
     } catch {
       setFormError("Erro inesperado. Tente novamente.");
     } finally {
@@ -215,7 +215,7 @@ export default function RegisterScreen() {
             <TouchableOpacity
               style={styles.backButton}
               activeOpacity={0.8}
-              onPress={() => navigation.goBack()}
+              onPress={() => router.back()}
             >
               <Text style={styles.backButtonText}>Voltar ao login</Text>
             </TouchableOpacity>

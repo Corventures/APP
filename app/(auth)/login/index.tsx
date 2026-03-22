@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { useRouter } from "expo-router";
 import {
   View,
   Text,
@@ -19,11 +19,10 @@ import CustomInput from "@/components/CustomInput";
 import PrimaryButton from "@/components/PrimaryButton";
 import { colors } from "@/styles/color";
 import { supabase } from "@/lib/supabase";
-import { useAppNavigation } from "@/hooks/useAppNavigation";
 import { Check, User, Lock } from "lucide-react-native";
 
 export default function LoginScreen() {
-  const navigation = useAppNavigation();
+  const router = useRouter();
 
   const [rm, setRm] = useState("");
   const [password, setPassword] = useState("");
@@ -32,7 +31,6 @@ export default function LoginScreen() {
   const [rmError, setRmError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [formError, setFormError] = useState("");
-
 
   async function handleLogin() {
     if (!validateForm()) {
@@ -61,7 +59,7 @@ export default function LoginScreen() {
         } else {
           await AsyncStorage.setItem("@remember_me", "false");
         }
-        navigation.replace("Home");
+        router.replace("/(tabs)/home");
       }
     } catch {
       setFormError("Erro inesperado. Tente novamente.");
@@ -181,7 +179,7 @@ export default function LoginScreen() {
 
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  onPress={() => navigation.navigate("ForgotPassword")}
+                  onPress={() => router.push("/(auth)/forgot-password")}
                 >
                   <Text style={styles.forgotText}>Esqueci minha senha</Text>
                 </TouchableOpacity>
@@ -202,7 +200,7 @@ export default function LoginScreen() {
               <TouchableOpacity
                 style={styles.secondaryButton}
                 activeOpacity={0.8}
-                onPress={() => navigation.navigate("Register")}
+                onPress={() => router.push("/(auth)/register")}
               >
                 <Text style={styles.secondaryButtonText}>Criar conta</Text>
               </TouchableOpacity>

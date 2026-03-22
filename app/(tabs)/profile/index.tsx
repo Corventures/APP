@@ -1,4 +1,3 @@
-import React from "react";
 import {
     View,
     Text,
@@ -10,9 +9,9 @@ import {
     Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { colors } from "@/styles/color";
-import { useAppNavigation } from "@/hooks/useAppNavigation";
 import { supabase } from "@/lib/supabase";
 import {
     ChevronRight,
@@ -24,19 +23,18 @@ import {
     FileText,
     LucideIcon,
     Mail,
-    Edit3,
     IdCard
 } from "lucide-react-native";
 
 export default function ProfileTabScreen() {
-    const navigation = useAppNavigation();
+    const router = useRouter();
 
     async function handleLogout() {
         try {
             await AsyncStorage.setItem("@remember_me", "false");
             await supabase.auth.signOut();
-            navigation.replace("Login");
-        } catch (e) {
+            router.replace("/(auth)/login");
+        } catch {
             Alert.alert("Erro", "Não foi possível realizar o logout.");
         }
     }
@@ -82,9 +80,9 @@ export default function ProfileTabScreen() {
                                 <Text style={styles.userName} numberOfLines={1}>
                                     Augusto Barcelos Barros
                                 </Text>
-                                <TouchableOpacity style={styles.editButton} activeOpacity={0.7}>
+                                {/* <TouchableOpacity style={styles.editButton} activeOpacity={0.7}>
                                     <Edit3 size={16} color={colors.textSecondary} strokeWidth={1.7} />
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
                             </View>
 
                             <View style={styles.badgeGroup}>

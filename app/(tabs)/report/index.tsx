@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react";
-import { ChevronDown, ChevronUp, LucideIcon, UserX } from "lucide-react-native";
+import { useState, useRef } from "react";
+import { ChevronDown, ChevronUp, LucideIcon } from "lucide-react-native";
 import {
   View,
   Text,
@@ -23,13 +23,11 @@ import { calcSemesterAverage } from "@/components/tabs/report/gradeUtils";
 
 export default function ReportTabScreen() {
   const [expandedSubjects, setExpandedSubjects] = useState<Set<string>>(new Set([]));
-  const [activeSemester, setActiveSemester] = useState<1 | 2>(1);
   const cardsScrollRef = useRef<ScrollView>(null);
   const scrollX = useRef(new Animated.Value(0)).current;
   const { width: screenWidth } = useWindowDimensions();
 
   const scrollToSemester = (semester: 1 | 2) => {
-    setActiveSemester(semester);
     cardsScrollRef.current?.scrollTo({
       x: semester === 1 ? 0 : screenWidth,
       animated: true,
@@ -70,8 +68,7 @@ export default function ReportTabScreen() {
 
   const handleCardsMomentumEnd = (event: any) => {
     const offsetX = event.nativeEvent.contentOffset.x;
-    const semester = offsetX >= screenWidth / 2 ? 2 : 1;
-    setActiveSemester(semester);
+    offsetX >= screenWidth / 2 ? 2 : 1;
   };
 
   const renderSemesterCards = (semesterNumber: 1 | 2) => (
@@ -186,6 +183,7 @@ export default function ReportTabScreen() {
                 styles.switchKnob,
                 { left: animatedLeft, width: "50%" },
               ]}
+              pointerEvents={"none"}
             />
             <Pressable
               style={styles.switchButton}
@@ -245,7 +243,7 @@ const styles = StyleSheet.create({
   },
   header: {
     marginVertical: 10,
-    marginBottom: 24,
+    marginBottom: 16,
   },
   title: {
     fontSize: 28,
@@ -254,9 +252,11 @@ const styles = StyleSheet.create({
   stickySwitchWrap: {
     marginHorizontal: -16,
     backgroundColor: colors.background,
+    paddingTop: 4,
     paddingBottom: 12,
     paddingHorizontal: 16,
-    zIndex: 10,
+    zIndex: 20,
+    elevation: 2,
   },
   switchContainer: {
     flexDirection: 'row',
