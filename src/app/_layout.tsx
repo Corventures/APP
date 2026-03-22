@@ -3,7 +3,7 @@ import { Stack } from "expo-router";
 import { supabase } from "@/lib/supabase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Session } from "@supabase/supabase-js";
-import { colors } from "@/styles/color";
+import { colors } from "@/constants/color";
 
 export default function RootLayout() {
   const [session, setSession] = useState<Session | null>(null);

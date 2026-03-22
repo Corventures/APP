@@ -1,4 +1,4 @@
-import type { LucideIcon } from "lucide-react-native";
+import type { LucideIcon} from "lucide-react-native";
 
 type TabBarIconProps = {
     Icon: LucideIcon;

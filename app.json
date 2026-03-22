@@ -35,7 +35,8 @@
       }
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "./src/plugins/withAndroidAutofill.js"
     ]
   }
 }

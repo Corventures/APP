@@ -4,7 +4,7 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from "react-native";
-import { colors } from "../styles/color";
+import { colors } from "../constants/color";
 
 interface PrimaryButtonProps {
   title: string;

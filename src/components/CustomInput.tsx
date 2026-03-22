@@ -8,7 +8,7 @@ import {
   TextInputProps,
 } from "react-native";
 import { LucideIcon, Eye, EyeOff } from "lucide-react-native";
-import { colors } from "../styles/color";
+import { colors } from "../constants/color";
 
 interface CustomInputProps extends TextInputProps {
   label: string;

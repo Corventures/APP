@@ -13,13 +13,13 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { colors } from "@/styles/color";
+import { colors } from "@/constants/color";
 import {
   SUBJECTS,
   Subject,
 } from "@/data/subjects";
-import SemesterSection from "@/components/tabs/report/SemesterSection";
-import { calcSemesterAverage } from "@/components/tabs/report/gradeUtils";
+import SemesterSection from "@/screens/report/SemesterSection";
+import { calcSemesterAverage } from "@/screens/report/gradeUtils";
 
 export default function ReportTabScreen() {
   const [expandedSubjects, setExpandedSubjects] = useState<Set<string>>(new Set([]));
@@ -68,6 +68,7 @@ export default function ReportTabScreen() {
 
   const handleCardsMomentumEnd = (event: any) => {
     const offsetX = event.nativeEvent.contentOffset.x;
+    // Update semester when scrolling (momentumScrollEnd)
     offsetX >= screenWidth / 2 ? 2 : 1;
   };
 

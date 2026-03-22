@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from "react-native";
-import { colors } from "@/styles/color";
+import { colors } from "@/constants/color";
 
 type EvaluationBadgeProps = {
     type: string;

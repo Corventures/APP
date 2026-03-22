@@ -1,7 +1,7 @@
 import { Tabs } from "expo-router";
 import { StyleSheet } from "react-native";
-import { colors } from "@/styles/color";
-import TabBarIcon from "@/components/tabs/bottom-bar/TabBarIcon";
+import { colors } from "@/constants/color";
+import TabBarIcon from "@/screens/bottom-bar/TabBarIcon";
 import { FileText, Home, MapPin, User, MessageCircle } from "lucide-react-native";
 
 export default function TabsLayout() {
@@ -25,20 +25,20 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="report"
-        options={{
-          title: "Boletim",
-          tabBarIcon: ({ color, size, focused }) => (
-            <TabBarIcon Icon={FileText} color={color} size={size} focused={focused} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="maps"
         options={{
           title: "Mapa",
           tabBarIcon: ({ color, size, focused }) => (
             <TabBarIcon Icon={MapPin} color={color} size={size} focused={focused} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="report"
+        options={{
+          title: "Boletim",
+          tabBarIcon: ({ color, size, focused }) => (
+            <TabBarIcon Icon={FileText} color={color} size={size} focused={focused} />
           ),
         }}
       />

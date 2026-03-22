@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Sparkles, Bell, LucideIcon } from "lucide-react-native";
-import { colors } from "@/styles/color";
+import { colors } from "@/constants/color";
 import {
     Animated,
     Easing,

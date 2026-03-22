@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import { Semester } from "@/data/subjects";
-import { colors } from "@/styles/color";
+import { colors } from "@/constants/color";
 import EvaluationBadge from "./EvaluationBadge";
 import { calcSemesterAverage } from "./gradeUtils";
 

@@ -1,4 +1,4 @@
-import { colors } from "@/styles/color";
+import { colors } from "@/constants/color";
 import {
     LucideIcon,
     Smartphone,

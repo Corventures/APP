@@ -15,7 +15,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 
 import CustomInput from "@/components/CustomInput";
 import PrimaryButton from "@/components/PrimaryButton";
-import { colors } from "@/styles/color";
+import { colors } from "@/constants/color";
 import { supabase } from "@/lib/supabase";
 import { Mail, Lock, ShieldCheck } from "lucide-react-native";
 
@@ -140,7 +140,7 @@ export default function RegisterScreen() {
         >
           <View style={styles.topSection}>
             <Image
-              source={require("@assets/fiap-logo.png")}
+              source={require("@/assets/fiap-logo.png")}
               style={styles.logo}
               resizeMode="contain"
             />
