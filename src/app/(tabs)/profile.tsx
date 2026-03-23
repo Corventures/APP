@@ -32,115 +32,9 @@ import {
 
 export default function ProfileTabScreen() {
     const router = useRouter();
-    const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
-
-    useEffect(() => {
-        downloadAvatar();
-    }, []);
-
-    const downloadAvatar = async () => {
-        try {
-            setLoading(true);
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session?.user) return;
-
-            const fileName = `${session.user.id}/avatar.jpg`;
-            const { data, error } = await supabase.storage
-                .from("avatars")
-                .download(fileName);
-
-            if (error) {
-                console.log("Nenhuma imagem de avatar encontrada");
-                setAvatarUrl(null);
-                return;
-            }
-
-            const fileReaderInstance = new FileReader();
-            fileReaderInstance.readAsDataURL(data);
-            fileReaderInstance.onload = () => {
-                const base64data = fileReaderInstance.result as string;
-                setAvatarUrl(base64data);
-            };
-        } catch (error) {
-            console.log("Erro ao carregar avatar:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const pickImage = async () => {
-        const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (!permission.granted) {
-            Alert.alert("Permissão", "Precisamos de permissão para acessar suas fotos.");
-            return;
-        }
-
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [1, 1],
-            quality: 0.8,
-        });
-
-        if (!result.canceled && result.assets[0]) {
-            uploadAvatar(result.assets[0].uri);
-        }
-    };
-
-    const uploadAvatar = async (uri: string) => {
-        try {
-            setUploading(true);
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session?.user) {
-                Alert.alert("Erro", "Usuário não autenticado");
-                return;
-            }
-
-            const fileName = `${session.user.id}/avatar.jpg`;
-            const base64 = await getBase64FromUri(uri);
-
-            const { error } = await supabase.storage
-                .from("avatars")
-                .upload(fileName, base64, {
-                    cacheControl: "3600",
-                    upsert: true,
-                });
-
-            if (error) {
-                Alert.alert("Erro ao enviar", error.message);
-                return;
-            }
-
-            // Atualizar URL local
-            setAvatarUrl(uri);
-            Alert.alert("Sucesso", "Imagem de perfil atualizada com sucesso!");
-        } catch (error) {
-            Alert.alert("Erro", "Não foi possível enviar a imagem");
-            console.error(error);
-        } finally {
-            setUploading(false);
-        }
-    };
-
-    const getBase64FromUri = async (uri: string): Promise<ArrayBuffer> => {
-        const response = await fetch(uri);
-        const blob = await response.blob();
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-                const result = reader.result as string;
-                const base64String = result.split(",")[1];
-                const bytes = Uint8Array.from(atob(base64String), (c) =>
-                    c.charCodeAt(0)
-                );
-                resolve(bytes.buffer);
-            };
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-        });
-    };
 
     async function handleLogout() {
         try {
@@ -179,20 +73,17 @@ export default function ProfileTabScreen() {
                         style={[styles.bannerImage, { opacity: 0.8, backgroundColor: "#18181B" }]}
                         resizeMode="cover"
                     />
-
                     <TouchableOpacity
                         style={styles.avatarContainer}
-                        onPress={pickImage}
                         disabled={uploading}
                     >
-                        {loading ? (
+                        {true ? (
                             <View style={[styles.avatarImage, { justifyContent: 'center', alignItems: 'center' }]}>
-                                <ActivityIndicator size="large" color={colors.primary} />
+                                <ActivityIndicator size={64} color={colors.primary} />
                             </View>
-                        ) : avatarUrl ? (
+                        ) : true ? (
                             <>
                                 <Image
-                                    source={{ uri: avatarUrl }}
                                     style={styles.avatarImage}
                                     resizeMode="cover"
                                 />
@@ -226,16 +117,12 @@ export default function ProfileTabScreen() {
                             </View>
                         )}
                     </TouchableOpacity>
-
                     <View style={styles.userInfoContainer}>
                         <View style={styles.userInfoCard}>
                             <View style={styles.nameRow}>
                                 <Text style={styles.userName} numberOfLines={1}>
                                     Augusto Barcelos Barros
                                 </Text>
-                                {/* <TouchableOpacity style={styles.editButton} activeOpacity={0.7}>
-                                    <Edit3 size={16} color={colors.textSecondary} strokeWidth={1.7} />
-                                </TouchableOpacity> */}
                             </View>
 
                             <View style={styles.badgeGroup}>
@@ -358,7 +245,6 @@ const styles = StyleSheet.create({
         borderColor: colors.background,
     },
     uploadingOverlay: {
-        ...StyleSheet.absoluteFillObject,
         backgroundColor: "rgba(0, 0, 0, 0.5)",
         borderRadius: 80,
         alignItems: "center",
@@ -390,16 +276,6 @@ const styles = StyleSheet.create({
         fontSize: 21,
         fontWeight: "800",
         flexShrink: 1,
-    },
-    editButton: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        alignItems: "center",
-        justifyContent: "center",
-        borderWidth: 1,
-        borderColor: "#2B2B32",
-        backgroundColor: "#1E1E24",
     },
     idBadge: {
         flexDirection: "row",

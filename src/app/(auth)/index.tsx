@@ -3,14 +3,35 @@ import { View, StyleSheet, Image, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { colors } from "@/constants/color";
+import { supabase } from "@/lib/supabase";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SplashScreen() {
   const router = useRouter();
 
   useEffect(() => {
-    setTimeout(() => {
-      router.replace("/(auth)/login");
-    }, 1000);
+    async function checkUser() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const rememberMe = await AsyncStorage.getItem("@remember_me");
+
+        setTimeout(async () => {
+          if (session) {
+            if (rememberMe === "true") {
+              router.replace("home");
+            } else {
+              await supabase.auth.signOut();
+              router.replace("login");
+            }
+          } else {
+            router.replace("login");
+          }
+        }, 1000);
+      } catch {
+        router.replace("login");
+      }
+    }
+    checkUser();
   }, [router]);
 
   return (

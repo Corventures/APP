@@ -1,4 +1,4 @@
-const { withAndroidStyles } = require("@expo/config-plugins");
+const { withAndroidStyles } = require("expo/config-plugins");
 
 module.exports = function withAndroidAutofill(config) {
   return withAndroidStyles(config, (config) => {
