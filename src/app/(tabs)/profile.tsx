@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
     View,
     Text,
@@ -6,15 +6,16 @@ import {
     StatusBar,
     ScrollView,
     TouchableOpacity,
-    Alert,
     Image,
-    ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
+import { File } from "expo-file-system";
 import { colors } from "@/constants/color";
+import ProfileAvatar from "@/components/Avatar";
+import AppAlertModal, { type AlertVariant } from "@/components/AppAlertModal";
 import { supabase } from "@/lib/supabase";
 import {
     ChevronRight,
@@ -27,14 +28,172 @@ import {
     LucideIcon,
     Mail,
     IdCard,
-    Camera,
+    Trash2,
 } from "lucide-react-native";
+
+interface UserProfile {
+    id: string;
+    email: string;
+    full_name: string;
+    avatar_url: string | null;
+}
 
 export default function ProfileTabScreen() {
     const router = useRouter();
 
-    const [loading, setLoading] = useState(false);
+    const [profile, setProfile] = useState<UserProfile | null>(null);
+    const [avatarUri, setAvatarUri] = useState<string | null>(null);
+    const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
+    const [alertState, setAlertState] = useState<{
+        visible: boolean;
+        title: string;
+        message: string;
+        variant: AlertVariant;
+    }>({
+        visible: false,
+        title: "",
+        message: "",
+        variant: "warning",
+    });
+
+    const showAlert = useCallback((title: string, message: string, variant: AlertVariant) => {
+        setAlertState({ visible: true, title, message, variant });
+    }, []);
+
+    const closeAlert = useCallback(() => {
+        setAlertState((prevState) => ({ ...prevState, visible: false }));
+    }, []);
+
+    const getPublicUrl = useCallback((userId: string): string | null => {
+        const { data } = supabase.storage
+            .from("avatars")
+            .getPublicUrl(`${userId}/avatar.jpg`);
+        console.log("Public URL data:", data);
+        return data?.publicUrl ?? null;
+    }, []);
+
+    const loadUser = useCallback(async () => {
+        try {
+            setLoading(true);
+
+            const { data: { user }, error } = await supabase.auth.getUser();
+            if (error || !user) throw error;
+
+            const meta = user.user_metadata ?? {};
+
+            const userProfile: UserProfile = {
+                id: user.id,
+                email: user.email ?? "",
+                full_name: meta.full_name ?? meta.name ?? user.email ?? "Usuário",
+                avatar_url: meta.avatar_url ?? null,
+            };
+
+            setProfile(userProfile);
+
+
+            if (userProfile.avatar_url) {
+                const publicUrl = getPublicUrl(user.id);
+                if (publicUrl) setAvatarUri(publicUrl);
+            }
+        } catch (err) {
+            console.error("Erro ao carregar usuário:", err);
+        } finally {
+            setLoading(false);
+        }
+    }, [getPublicUrl]);
+
+    useEffect(() => {
+        loadUser();
+    }, [loadUser]);
+
+    async function handleRemoveAvatar() {
+        if (!profile) return;
+        try {
+            setUploading(true);
+            // Remove from storage
+            const { error: removeError } = await supabase.storage
+                .from("avatars")
+                .remove([`${profile.id}/avatar.jpg`]);
+            if (removeError) throw removeError;
+
+            // Remove from user metadata
+            await supabase.auth.updateUser({ data: { avatar_url: null } });
+
+            setAvatarUri(null);
+            setProfile((prev) => prev ? { ...prev, avatar_url: null } : prev);
+
+            showAlert("Foto removida", "Sua foto de perfil foi removida.", "success");
+        } catch (err: any) {
+            console.error("Erro ao remover avatar:", err);
+            showAlert("Erro", err.message ?? "Não foi possível remover a foto.", "error");
+        } finally {
+            setUploading(false);
+        }
+    }
+
+    async function handlePickAvatar() {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+            showAlert("Permissão necessária", "Permita o acesso à galeria nas configurações.", "warning");
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: "images",
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.7,
+        });
+
+        if (result.canceled || !result.assets?.[0]) return;
+
+        await uploadAvatar(result.assets[0].uri);
+    }
+
+    async function uploadAvatar(uri: string) {
+        if (!profile) return;
+
+        try {
+            setUploading(true);
+
+
+            const file = new File(uri);
+            const bytes = await file.bytes();
+
+            const filePath = `${profile.id}/avatar.jpg`;
+
+            const { error: uploadError } = await supabase.storage
+                .from("avatars")
+                .upload(filePath, bytes, {
+                    contentType: "image/jpeg",
+                    upsert: true,
+                });
+
+            if (uploadError) throw uploadError;
+
+
+            await supabase.auth.updateUser({
+                data: { avatar_url: filePath },
+            });
+
+
+            const publicUrl = getPublicUrl(profile.id);
+            setAvatarUri(publicUrl ? `${publicUrl}?t=${Date.now()}` : null);
+
+            showAlert(
+                "Foto atualizada",
+                "Sua foto de perfil foi alterada com sucesso",
+                "success"
+            );
+        } catch (err: any) {
+            console.error("Erro no upload:", err);
+            showAlert("Erro", err.message ?? "Não foi possível atualizar a foto.", "error");
+        } finally {
+            setUploading(false);
+        }
+    }
+
 
     async function handleLogout() {
         try {
@@ -42,9 +201,10 @@ export default function ProfileTabScreen() {
             await supabase.auth.signOut();
             router.replace("/(auth)/login");
         } catch {
-            Alert.alert("Erro", "Não foi possível realizar o logout.");
+            showAlert("Erro", "Não foi possível realizar o logout.", "error");
         }
     }
+
 
     const menuItems: { id: string; icon: LucideIcon; label: string }[] = [
         { id: "1", icon: User, label: "Meu Perfil" },
@@ -60,9 +220,17 @@ export default function ProfileTabScreen() {
         { id: "average", value: "9.48", label: "Média Geral" },
     ];
 
+
     return (
         <SafeAreaView style={styles.safeArea} edges={["top"]}>
             <StatusBar barStyle="light-content" backgroundColor={colors.background} />
+            <AppAlertModal
+                visible={alertState.visible}
+                title={alertState.title}
+                message={alertState.message}
+                variant={alertState.variant}
+                onClose={closeAlert}
+            />
             <ScrollView
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
@@ -73,54 +241,34 @@ export default function ProfileTabScreen() {
                         style={[styles.bannerImage, { opacity: 0.8, backgroundColor: "#18181B" }]}
                         resizeMode="cover"
                     />
-                    <TouchableOpacity
-                        style={styles.avatarContainer}
-                        disabled={uploading}
-                    >
-                        {true ? (
-                            <View style={[styles.avatarImage, { justifyContent: 'center', alignItems: 'center' }]}>
-                                <ActivityIndicator size={64} color={colors.primary} />
+
+
+                    <ProfileAvatar
+                        avatarUri={avatarUri}
+                        loading={loading}
+                        uploading={uploading}
+                        onPress={handlePickAvatar}
+                    />
+
+                    {avatarUri && !loading && (
+                        <TouchableOpacity
+                            style={styles.removePhotoButton}
+                            onPress={handleRemoveAvatar}
+                            activeOpacity={0.8}
+                            disabled={uploading}
+                        >
+                            <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                                <Trash2 size={16} color={colors.error} strokeWidth={2} />
+                                <Text style={styles.removePhotoText}>Remover foto</Text>
                             </View>
-                        ) : true ? (
-                            <>
-                                <Image
-                                    style={styles.avatarImage}
-                                    resizeMode="cover"
-                                />
-                                <View style={styles.cameraOverlay}>
-                                    <Camera size={28} color={colors.white} />
-                                </View>
-                            </>
-                        ) : (
-                            <>
-                                <View
-                                    style={[
-                                        styles.avatarImage,
-                                        {
-                                            backgroundColor: "#2B2B32",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            flex: 1,
-                                        },
-                                    ]}
-                                >
-                                    <User size={64} color="#888" />
-                                </View>
-                                <View style={styles.cameraOverlay}>
-                                    <Camera size={28} color={colors.white} />
-                                </View>
-                            </>
-                        )}
-                        {uploading && (
-                            <View style={styles.uploadingOverlay}>
-                                <ActivityIndicator size="small" color={colors.white} />
-                            </View>
-                        )}
-                    </TouchableOpacity>
+                        </TouchableOpacity>
+                    )}
+
                     <View style={styles.userInfoContainer}>
                         <View style={styles.userInfoCard}>
                             <View style={styles.nameRow}>
                                 <Text style={styles.userName} numberOfLines={1}>
+                                    {/* {profile?.full_name ?? "Usuário"} */}
                                     Augusto Barcelos Barros
                                 </Text>
                             </View>
@@ -141,11 +289,12 @@ export default function ProfileTabScreen() {
 
                             <View style={styles.contactRow}>
                                 <Mail size={14} color={colors.textSecondary} strokeWidth={1.8} />
-                                <Text style={styles.userEmail}>rm565065@fiap.com.br</Text>
+                                <Text style={styles.userEmail}>{profile?.email ?? "—"}</Text>
                             </View>
                         </View>
                     </View>
                 </View>
+
                 <View style={styles.statsCard}>
                     {stats.map((stat) => (
                         <View key={stat.id} style={styles.statItem}>
@@ -159,7 +308,6 @@ export default function ProfileTabScreen() {
                 <View style={styles.menuContainer}>
                     {menuItems.map((item) => {
                         const IconComponent = item.icon;
-
                         return (
                             <TouchableOpacity
                                 key={item.id}
@@ -187,73 +335,21 @@ export default function ProfileTabScreen() {
 
                 <Text style={styles.version}>Versão 1.0.0</Text>
             </ScrollView>
-        </SafeAreaView >
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    safeArea: {
-        flex: 1,
-        backgroundColor: colors.background,
-    },
-    scrollContent: {
-        paddingHorizontal: 16,
-        paddingBottom: 32,
-    },
-    headerSection: {
-        marginBottom: 28,
-        alignItems: "center",
-    },
+    safeArea: { flex: 1, backgroundColor: colors.background },
+    scrollContent: { paddingHorizontal: 16, paddingBottom: 32 },
+    headerSection: { marginBottom: 28, alignItems: "center" },
     bannerImage: {
         width: "100%",
         height: 140,
         borderRadius: 20,
         backgroundColor: colors.primary,
     },
-    avatarContainer: {
-        width: 160,
-        height: 160,
-        borderRadius: 80,
-        marginTop: -80,
-        marginBottom: 12,
-        borderWidth: 6,
-        borderColor: colors.background,
-        backgroundColor: colors.card,
-        overflow: "hidden",
-        zIndex: 1,
-        shadowColor: colors.black,
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.25,
-        shadowRadius: 12,
-        elevation: 6,
-    },
-    avatarImage: {
-        width: "100%",
-        height: "100%",
-    },
-    cameraOverlay: {
-        position: "absolute",
-        bottom: 0,
-        right: 0,
-        width: 48,
-        height: 48,
-        borderRadius: 24,
-        backgroundColor: colors.primary,
-        alignItems: "center",
-        justifyContent: "center",
-        borderWidth: 3,
-        borderColor: colors.background,
-    },
-    uploadingOverlay: {
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-        borderRadius: 80,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    userInfoContainer: {
-        width: "100%",
-        paddingHorizontal: 8,
-    },
+    userInfoContainer: { width: "100%", paddingHorizontal: 8 },
     userInfoCard: {
         width: "100%",
         maxWidth: 380,
@@ -387,10 +483,7 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         marginTop: 8,
     },
-    menuContainer: {
-        gap: 10,
-        marginBottom: 24,
-    },
+    menuContainer: { gap: 10, marginBottom: 24 },
     menuItem: {
         flexDirection: "row",
         backgroundColor: colors.card,
@@ -441,5 +534,21 @@ const styles = StyleSheet.create({
         fontSize: 12,
         textAlign: "center",
         marginTop: 24,
+    },
+    removePhotoButton: {
+        marginBottom: 12,
+        alignSelf: "center",
+        paddingVertical: 8,
+        paddingHorizontal: 18,
+        borderRadius: 8,
+        backgroundColor: "#23232A",
+        borderWidth: 1,
+        borderColor: colors.error,
+    },
+    removePhotoText: {
+        color: colors.error,
+        fontSize: 14,
+        fontWeight: "700",
+        letterSpacing: 0.5,
     },
 });

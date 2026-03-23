@@ -18,7 +18,7 @@ import CustomInput from "@/components/CustomInput";
 import PrimaryButton from "@/components/PrimaryButton";
 import { colors } from "@/constants/color";
 import { supabase } from "@/lib/supabase";
-import { Mail } from "lucide-react-native";
+import { Check, CheckCircle, CircleCheck, Mail } from "lucide-react-native";
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
@@ -90,7 +90,8 @@ export default function ForgotPasswordScreen() {
             <View style={styles.card}>
               {isSuccess ? (
                 <View style={styles.successContainer}>
-                  <Text style={styles.successIcon}>✓</Text>
+                  <Check size={64} color={colors.success} strokeWidth={2} style={{marginBottom: 16}} />
+                  {/* <CircleCheck size={64} color={colors.success} strokeWidth={2} style={{marginBottom: 16}} /> */}
                   <Text style={styles.successTitle}>E-mail enviado!</Text>
                   <Text style={styles.successText}>
                     Se o endereço estiver cadastrado, você receberá um e-mail
@@ -212,11 +213,6 @@ const styles = StyleSheet.create({
   successContainer: {
     alignItems: "center",
     paddingVertical: 10,
-  },
-  successIcon: {
-    fontSize: 52,
-    color: colors.success,
-    marginBottom: 16,
   },
   successTitle: {
     color: colors.white,
