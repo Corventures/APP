@@ -69,7 +69,6 @@ export default function ProfileTabScreen() {
         const { data } = supabase.storage
             .from("avatars")
             .getPublicUrl(`${userId}/avatar.jpg`);
-        console.log("Public URL data:", data);
         return data?.publicUrl ?? null;
     }, []);
 
@@ -257,10 +256,8 @@ export default function ProfileTabScreen() {
                             activeOpacity={0.8}
                             disabled={uploading}
                         >
-                            <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                                <Trash2 size={16} color={colors.error} strokeWidth={2} />
-                                <Text style={styles.removePhotoText}>Remover foto</Text>
-                            </View>
+                            <Trash2 size={16} color={colors.error} strokeWidth={2} />
+                            <Text style={styles.removePhotoText}>Remover foto</Text>
                         </TouchableOpacity>
                     )}
 
@@ -535,20 +532,16 @@ const styles = StyleSheet.create({
         textAlign: "center",
         marginTop: 24,
     },
-    removePhotoButton: {
-        marginBottom: 12,
-        alignSelf: "center",
-        paddingVertical: 8,
-        paddingHorizontal: 18,
-        borderRadius: 8,
-        backgroundColor: "#23232A",
-        borderWidth: 1,
-        borderColor: colors.error,
-    },
     removePhotoText: {
         color: colors.error,
         fontSize: 14,
         fontWeight: "700",
         letterSpacing: 0.5,
     },
+    removePhotoButton: {
+        marginBottom: 16,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 6
+    }
 });

@@ -4,10 +4,13 @@ import { supabase } from "@/lib/supabase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Session } from "@supabase/supabase-js";
 import { colors } from "@/constants/color";
+import { useColorScheme } from "react-native";
 
 export default function RootLayout() {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const colorScheme = useColorScheme();
 
   useEffect(() => {
     async function bootstrap() {

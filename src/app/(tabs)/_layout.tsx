@@ -13,7 +13,10 @@ export default function TabsLayout() {
         tabBarLabelStyle: styles.tabBarLabel,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textMuted,
+        tabBarShowLabel: true,
+        sceneStyle: { backgroundColor: colors.background },
       }}
+
     >
       <Tabs.Screen
         name="home"

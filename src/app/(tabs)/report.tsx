@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { ChevronDown, ChevronUp, LucideIcon } from "lucide-react-native";
+import { useState, useRef, useCallback } from "react";
+import { ListChevronsDownUp, ListChevronsUpDown } from "lucide-react-native";
 import {
   View,
   Text,
@@ -14,25 +14,22 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors } from "@/constants/color";
-import {
-  SUBJECTS,
-  Subject,
-} from "@/data/subjects";
-import SemesterSection from "@/screens/report/SemesterSection";
-import { calcSemesterAverage } from "@/screens/report/gradeUtils";
+import { SUBJECTS } from "@/data/subjects";
+import SubjectCard from "@/screens/report/SubjectCard";
+
 
 export default function ReportTabScreen() {
-  const [expandedSubjects, setExpandedSubjects] = useState<Set<string>>(new Set([]));
+  const [expandedSubjects, setExpandedSubjects] = useState<Set<string>>(new Set());
   const cardsScrollRef = useRef<ScrollView>(null);
   const scrollX = useRef(new Animated.Value(0)).current;
   const { width: screenWidth } = useWindowDimensions();
 
-  const scrollToSemester = (semester: 1 | 2) => {
+  const scrollToSemester = useCallback((semester: 1 | 2) => {
     cardsScrollRef.current?.scrollTo({
       x: semester === 1 ? 0 : screenWidth,
       animated: true,
     });
-  };
+  }, [screenWidth]);
 
   const semesterProgress = scrollX.interpolate({
     inputRange: [0, screenWidth],
@@ -55,114 +52,37 @@ export default function ReportTabScreen() {
     outputRange: [colors.textSecondary, colors.white],
   });
 
-  const toggleSubject = (subjectId: string) => {
+  const isAllExpanded = expandedSubjects.size === SUBJECTS.length;
+
+  const toggleAllSubjects = useCallback(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    const newExpanded = new Set(expandedSubjects);
-    if (newExpanded.has(subjectId)) {
-      newExpanded.delete(subjectId);
-    } else {
-      newExpanded.add(subjectId);
-    }
-    setExpandedSubjects(newExpanded);
-  };
+    setExpandedSubjects(
+      isAllExpanded ? new Set() : new Set(SUBJECTS.map((s) => s.id))
+    );
+  }, [isAllExpanded]);
 
-  const handleCardsMomentumEnd = (event: any) => {
-    const offsetX = event.nativeEvent.contentOffset.x;
-    // Update semester when scrolling (momentumScrollEnd)
-    offsetX >= screenWidth / 2 ? 2 : 1;
-  };
+  const toggleSubject = useCallback((subjectId: string) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setExpandedSubjects((prev) => {
+      const next = new Set(prev);
+      next.has(subjectId) ? next.delete(subjectId) : next.add(subjectId);
+      return next;
+    });
+  }, []);
 
-  const renderSemesterCards = (semesterNumber: 1 | 2) => (
+  const renderSemesterCards = useCallback((semesterNumber: 1 | 2) => (
     <View style={styles.subjectsContainer}>
-      {SUBJECTS.map((subject: Subject) => {
-        const currentSemester = subject.semesters.find(
-          (semester) => semester.semester === semesterNumber
-        );
-        const currentAverage = currentSemester
-          ? calcSemesterAverage(currentSemester)
-          : 0;
-
-        const SubjectIcon = subject.icon as LucideIcon;
-        const cardKey = `${semesterNumber}-${subject.id}`;
-        const isExpanded = expandedSubjects.has(subject.id);
-
-        return (
-          <View key={cardKey} style={styles.subjectCard}>
-            <TouchableOpacity
-              style={styles.subjectHeader}
-              activeOpacity={0.7}
-              onPress={() => toggleSubject(subject.id)}
-            >
-              <View style={styles.subjectIconBg}>
-                <SubjectIcon size={24} color={colors.white} strokeWidth={1.5} />
-              </View>
-
-              <View style={styles.subjectInfo}>
-                {isExpanded ? (
-                  <Text style={styles.subjectTitle}>{subject.title}</Text>
-                ) : (
-                  <Text
-                    style={styles.subjectTitle}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                  >
-                    {subject.title}
-                  </Text>
-                )}
-                {/* <Text style={styles.subjectProfessor}>{subject.professor}</Text> */}
-                <View style={styles.quickStatsRow}>
-                  <View style={styles.quickStatBadge}>
-                    <Text style={styles.quickStatLabel}>Média</Text>
-                    <Text
-                      style={[
-                        styles.quickStatValue,
-                        { color: currentAverage >= 6 ? colors.success : colors.error },
-                      ]}
-                    >
-                      {currentAverage.toFixed(1)}
-                    </Text>
-                  </View>
-                  <View style={styles.quickStatBadge}>
-                    {/* <UserX size={14} color={colors.textSecondary} /> */}
-                    <Text style={styles.quickStatLabel}>Faltas</Text>
-                    <Text style={styles.quickStatValue}>
-                      <Text
-                        style={{
-                          color:
-                            (currentSemester?.absences ?? 0) >= 15
-                              ? colors.error
-                              : colors.white,
-                        }}
-                      >
-                        {currentSemester?.absences ?? 0}
-                      </Text>
-                      <Text style={{ color: colors.textSecondary }}>/20</Text>
-                    </Text>
-                  </View>
-                </View>
-              </View>
-
-              {isExpanded ? (
-                <ChevronUp size={24} color={colors.textSecondary} />
-              ) : (
-                <ChevronDown size={24} color={colors.textSecondary} />
-              )}
-            </TouchableOpacity>
-
-            {isExpanded && (
-              <View style={styles.expandedContent}>
-                {subject.semesters
-                  .filter((semester) => semester.semester === semesterNumber)
-                  .map((semester) => (
-                    <SemesterSection key={semester.semester} semester={semester} />
-                  ))}
-              </View>
-            )}
-          </View>
-        );
-      })}
+      {SUBJECTS.map((subject) => (
+        <SubjectCard
+          key={`${semesterNumber}-${subject.id}`}
+          subject={subject}
+          semesterNumber={semesterNumber}
+          isExpanded={expandedSubjects.has(subject.id)}
+          onToggle={toggleSubject}
+        />
+      ))}
     </View>
-  );
+  ), [expandedSubjects, toggleSubject]);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
@@ -175,29 +95,25 @@ export default function ReportTabScreen() {
       >
         <View style={styles.header}>
           <Text style={styles.title}>Boletim</Text>
+          <TouchableOpacity onPress={toggleAllSubjects} style={styles.toggleAllButton}>
+            {isAllExpanded
+              ? <ListChevronsDownUp size={24} color={colors.white} />
+              : <ListChevronsUpDown size={24} color={colors.white} />}
+          </TouchableOpacity>
         </View>
 
         <View style={styles.stickySwitchWrap}>
           <View style={styles.switchContainer}>
             <Animated.View
-              style={[
-                styles.switchKnob,
-                { left: animatedLeft, width: "50%" },
-              ]}
-              pointerEvents={"none"}
+              style={[styles.switchKnob, { left: animatedLeft, width: "50%" }]}
+              pointerEvents="none"
             />
-            <Pressable
-              style={styles.switchButton}
-              onPress={() => scrollToSemester(1)}
-            >
+            <Pressable style={styles.switchButton} onPress={() => scrollToSemester(1)}>
               <Animated.Text style={[styles.switchText, { color: animatedColorText1 }]}>
                 1º Semestre
               </Animated.Text>
             </Pressable>
-            <Pressable
-              style={styles.switchButton}
-              onPress={() => scrollToSemester(2)}
-            >
+            <Pressable style={styles.switchButton} onPress={() => scrollToSemester(2)}>
               <Animated.Text style={[styles.switchText, { color: animatedColorText2 }]}>
                 2º Semestre
               </Animated.Text>
@@ -215,7 +131,6 @@ export default function ReportTabScreen() {
             showsHorizontalScrollIndicator={false}
             nestedScrollEnabled
             scrollEventThrottle={16}
-            onMomentumScrollEnd={handleCardsMomentumEnd}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { x: scrollX } } }],
               { useNativeDriver: false }
@@ -229,6 +144,7 @@ export default function ReportTabScreen() {
     </SafeAreaView>
   );
 }
+
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -245,10 +161,17 @@ const styles = StyleSheet.create({
   header: {
     marginVertical: 10,
     marginBottom: 16,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  toggleAllButton: {
+    padding: 8,
   },
   title: {
-    fontSize: 28,
     color: colors.white,
+    fontSize: 28,
+    fontWeight: "800",
   },
   stickySwitchWrap: {
     marginHorizontal: -16,
@@ -260,25 +183,25 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   switchContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: colors.card,
     borderRadius: 30,
-    overflow: 'hidden',
+    overflow: "hidden",
     borderWidth: 1,
     borderColor: colors.border,
-    position: 'relative',
+    position: "relative",
     height: 48,
   },
   switchKnob: {
-    position: 'absolute',
+    position: "absolute",
     height: "100%",
     backgroundColor: colors.primary,
     borderRadius: 26,
   },
   switchButton: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     zIndex: 1,
   },
   switchText: {
@@ -330,10 +253,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "700",
     marginBottom: 2,
-  },
-  subjectProfessor: {
-    color: colors.textSecondary,
-    fontSize: 12,
   },
   quickStatsRow: {
     flexDirection: "row",

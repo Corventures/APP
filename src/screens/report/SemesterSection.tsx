@@ -1,3 +1,4 @@
+import React, { memo } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Semester } from "@/data/subjects";
 import { colors } from "@/constants/color";
@@ -6,16 +7,24 @@ import { calcSemesterAverage } from "./gradeUtils";
 
 type SemesterSectionProps = {
     semester: Semester;
+    absencesLimit: number;
 };
 
-export default function SemesterSection({ semester }: SemesterSectionProps) {
+export default memo(function SemesterSection({ semester, absencesLimit }: SemesterSectionProps) {
     const averageGrade = calcSemesterAverage(semester);
-    const absencesLimit = 20;
     const absencesProgress = Math.min((semester.absences / absencesLimit) * 100, 100);
     const averageProgress = Math.min((averageGrade / 10) * 100, 100);
 
-    const averageStatus =
-        averageGrade >= 8 ? "Excelente" : averageGrade >= 6 ? "Aprovado" : "Risco";
+    let averageStatus = "";
+    if (semester.absences >= absencesLimit) {
+        averageStatus = "Muitas faltas";
+    } else if (averageGrade >= 8) {
+        averageStatus = "Ótimo";
+    } else if (averageGrade >= 6) {
+        averageStatus = "Bom";
+    } else {
+        averageStatus = "Baixo";
+    }
 
     const lowestCpGrade = Math.min(
         ...semester.evaluations
@@ -36,9 +45,9 @@ export default function SemesterSection({ semester }: SemesterSectionProps) {
                             styles.semesterStatusText,
                             {
                                 color:
-                                    averageGrade >= 8
+                                    averageStatus === "Ótimo"
                                         ? colors.success
-                                        : averageGrade >= 6
+                                        : averageStatus === "Bom"
                                             ? colors.white
                                             : colors.error,
                             },
@@ -131,7 +140,7 @@ export default function SemesterSection({ semester }: SemesterSectionProps) {
             </View>
         </View>
     );
-}
+});
 
 const styles = StyleSheet.create({
     semesterContainer: {

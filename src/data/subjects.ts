@@ -29,6 +29,7 @@ export interface Subject {
     title: string;
     professor: string;
     icon: LucideIcon;
+    totalClasses: number;
     semesters: Semester[];
 }
 
@@ -38,6 +39,7 @@ export const SUBJECTS: Subject[] = [
         title: "Mobile Development & IoT",
         professor: "Adeilton da Silva Meneses",
         icon: Smartphone,
+        totalClasses: 80,
         semesters: [
             {
                 semester: 1,
@@ -70,6 +72,7 @@ export const SUBJECTS: Subject[] = [
         title: "Arquitetura Orientada a Serviços (SOA) e Web Services",
         professor: "Salatiel Luz Marinho",
         icon: Network,
+        totalClasses: 80,
         semesters: [
             {
                 semester: 1,
@@ -102,6 +105,7 @@ export const SUBJECTS: Subject[] = [
         title: "C# Software Development",
         professor: "Rafael Santos Novo Pereira",
         icon: FileCode,
+        totalClasses: 80,
         semesters: [
             {
                 semester: 1,
@@ -134,6 +138,7 @@ export const SUBJECTS: Subject[] = [
         title: "Cybersecurity",
         professor: "Vitor Miguel Lasse Silva",
         icon: ShieldCheck,
+        totalClasses: 80,
         semesters: [
             {
                 semester: 1,
@@ -166,6 +171,7 @@ export const SUBJECTS: Subject[] = [
         title: "Inteligência Artificial & Machine Learning",
         professor: "Danilo Rodrigues de Assis Elias",
         icon: BrainCircuit,
+        totalClasses: 80,
         semesters: [
             {
                 semester: 1,
@@ -198,6 +204,7 @@ export const SUBJECTS: Subject[] = [
         title: "Operating Systems",
         professor: "Bruno Luiz de Almeida",
         icon: TerminalSquare,
+        totalClasses: 80,
         semesters: [
             {
                 semester: 1,
@@ -230,6 +237,7 @@ export const SUBJECTS: Subject[] = [
         title: "Physical Computing: IoT & IOB",
         professor: "Yan Gabriel Coelho",
         icon: CircuitBoard,
+        totalClasses: 80,
         semesters: [
             {
                 semester: 1,
@@ -262,6 +270,7 @@ export const SUBJECTS: Subject[] = [
         title: "Testing, Compliance & Quality Assurance",
         professor: "Prof. Gabriela Costa",
         icon: FlaskConical,
+        totalClasses: 80,
         semesters: [
             {
                 semester: 1,
